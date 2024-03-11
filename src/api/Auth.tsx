@@ -14,7 +14,7 @@ import {
   Route,
   Routes,
 } from "react-router-dom";
-import { useFetch, useSubmit } from "../utils";
+import { useFetch, useSubmit } from "../utils/hooks";
 
 // const baseUrl = "http://localhost:8080/admin"
 const baseUrl = "https://graphify.ovh/admin";
