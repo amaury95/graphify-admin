@@ -1,0 +1,17 @@
+import { Form, InputNumber } from "antd";
+import { capitalise } from "utils/functions";
+import { DynamicInputProps } from "../types";
+
+export default function NumberInput({ name }: DynamicInputProps) {
+  return (
+    <Form.Item
+      label={capitalise(name)}
+      name={name}
+      // rules={[{ required: true, message: "Please input your username!" }]}
+    >
+      <InputNumber
+      //   min={1} max={10} defaultValue={3} onChange={onChange}
+      />
+    </Form.Item>
+  );
+}
