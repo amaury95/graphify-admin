@@ -11,6 +11,7 @@ import { MockLogoText } from "mock/logo";
 import CustomMenu from "./components/Menu";
 import { getFooterItems, getMenuItems } from "./items";
 import { useLocation } from "react-router-dom";
+import { useSchema } from "providers/schema";
 
 interface NavProps {
   collapsed: boolean;
@@ -38,6 +39,8 @@ export default function Nav({ collapsed, onCollapse }: NavProps) {
     }
   }, [pathname]);
 
+  const { schema } = useSchema();
+
   return (
     <Flex
       vertical
@@ -56,18 +59,8 @@ export default function Nav({ collapsed, onCollapse }: NavProps) {
       <Flex vertical style={siderStyle} justify="space-between">
         {/* Menu */}
         <Flex vertical>
-          <CustomMenu
-            items={getMenuItems(collapsed)}
-            // selectedKeys={selectedItems}
-            // onClick={handleSelectedItems}
-            active={active}
-          />
-          <CustomMenu
-            items={getFooterItems(collapsed)}
-            // selectedKeys={selectedItems}
-            // onClick={handleSelectedItems}
-            active={active}
-          />
+          <CustomMenu items={getMenuItems(collapsed, schema)} active={active} />
+          <CustomMenu items={getFooterItems(collapsed)} active={active} />
         </Flex>
 
         {/* Settings */}

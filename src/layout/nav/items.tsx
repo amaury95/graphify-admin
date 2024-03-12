@@ -24,9 +24,9 @@ import {
 import { Link } from "react-router-dom";
 import { capitalise } from "utils/functions";
 import ThemeSwitch from "./components/ThemeSwitch";
+import { Schema } from "types/schema";
 
 type MenuItem = Required<MenuProps>["items"][number];
-
 
 function getItem(
   label: React.ReactNode,
@@ -114,7 +114,7 @@ const CreateLogoutConfirmation = () => {
   );
 };
 
-export function getMenuItems(collapsed: boolean) {
+export function getMenuItems(collapsed: boolean, schema: Schema) {
   const menuItems: MenuProps["items"] = [
     getItem(
       collapsed ? createDotNode() : "Dashboard",
@@ -138,7 +138,9 @@ export function getMenuItems(collapsed: boolean) {
       null,
       [
         getItem(createLinkNode("admins"), "admins", <CalendarOutlined />),
-        getItem(createLinkNode("books"), "books", <BarsOutlined />),
+        ...Object.keys(schema.nodes)
+          .filter((key) => key !== "admins")
+          .map((key) => getItem(createLinkNode(key), key, <BarsOutlined />)),
       ],
       "group"
     ),

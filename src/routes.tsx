@@ -90,9 +90,8 @@ export default function AppRoutes() {
         {/* App Dashboard */}
         <Route element={<AppLayout />}>
           <Route index element={<div />} />
-          <Route path="dashboard/" element={<Dashboard />} />
-          <Route path="tables/" element={<Tables />} />
-          <Route path="books/" element={<Tables />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path=":collection" element={<Tables />} />
 
           <Route path="*" element={<PageNotFound />} />
           {/* <Route path="compounds/" element={<CompoundsView />}>
