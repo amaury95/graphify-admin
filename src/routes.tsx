@@ -14,6 +14,7 @@ import PageNotFound from "views/PageNotFound";
 import Nav from "layout/nav";
 import { Header } from "antd/es/layout/layout";
 import TopNav from "layout/header";
+import SchemaProvider from "providers/schema";
 
 const { Sider, Content } = Layout;
 
@@ -45,34 +46,36 @@ function AppLayout() {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <Layout style={layoutStyle}>
-      <Sider
-        trigger={null}
-        collapsible
-        collapsed={collapsed}
-        width="20%"
-        style={siderStyle}
-        onCollapse={(value) => setCollapsed(value)}
-        className="glassmorphism"
-      >
-        <Nav onCollapse={setCollapsed} collapsed={collapsed} />
-      </Sider>
-      <Layout>
-        <Header style={headerStyle}>
-          <TopNav />
-        </Header>
-        <Content style={contentStyle}>
-          {/* Float Buttons */}
-          <FloatButton
-            icon={<RocketOutlined />}
-            tooltip={<div>Chat with AI assistant</div>}
-          />
+    <SchemaProvider>
+      <Layout style={layoutStyle}>
+        <Sider
+          trigger={null}
+          collapsible
+          collapsed={collapsed}
+          width="20%"
+          style={siderStyle}
+          onCollapse={(value) => setCollapsed(value)}
+          className="glassmorphism"
+        >
+          <Nav onCollapse={setCollapsed} collapsed={collapsed} />
+        </Sider>
+        <Layout>
+          <Header style={headerStyle}>
+            <TopNav />
+          </Header>
+          <Content style={contentStyle}>
+            {/* Float Buttons */}
+            <FloatButton
+              icon={<RocketOutlined />}
+              tooltip={<div>Chat with AI assistant</div>}
+            />
 
-          {/* Content */}
-          <Outlet />
-        </Content>
+            {/* Content */}
+            <Outlet />
+          </Content>
+        </Layout>
       </Layout>
-    </Layout>
+    </SchemaProvider>
   );
 }
 
