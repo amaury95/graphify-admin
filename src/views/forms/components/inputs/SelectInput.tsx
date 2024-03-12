@@ -1,6 +1,6 @@
 import { Form, Select } from "antd";
 import { capitalise } from "utils/functions";
-import { transformOptions } from "../utils";
+import { transformOptions } from "../../utils";
 
 interface SelectInputProps {
   name: string;

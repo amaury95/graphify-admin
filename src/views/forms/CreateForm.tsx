@@ -1,8 +1,6 @@
-import React from "react";
-import { CloseOutlined } from "@ant-design/icons";
-import { Button, Card, Form, Input, Space, Typography } from "antd";
+import { Form } from "antd";
 import { Element } from "types/schema";
-import { mapTypeToComponent } from "./utils";
+import FormInputs from "./components/FormInputs";
 
 // Map Types
 // string => Input
@@ -14,6 +12,8 @@ import { mapTypeToComponent } from "./utils";
 // Map Kind
 // list => add elements of type
 // map => add elemnts of {key: type, value: type2}
+
+const formStyle: React.CSSProperties = { maxWidth: 600, minWidth: 400 };
 
 interface CreateNewFormProps {
   schema: Element;
@@ -28,19 +28,12 @@ export default function CreateNewForm({ schema }: CreateNewFormProps) {
       wrapperCol={{ span: 18 }}
       form={form}
       name="dynamic_form_complex"
-      style={{ maxWidth: 600 }}
+      style={formStyle}
       autoComplete="off"
       initialValues={{ items: [{}] }}
     >
       {/* fields */}
-      {Object.entries(schema.fields).map(([key, field], index) => {
-        if (key === "_key") {
-          return null;
-        }
-        return (
-          <div key={"field-" + index + key}>{mapTypeToComponent(field)}</div>
-        );
-      })}
+      <FormInputs schema={schema} />
 
       {/* stepper for one ofs */}
       {/* <Form.Item noStyle shouldUpdate>

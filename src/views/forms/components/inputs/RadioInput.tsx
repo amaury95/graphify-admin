@@ -1,4 +1,4 @@
-import { Form, Radio } from "antd";
+import { Form, Radio, Space } from "antd";
 import { capitalise } from "utils/functions";
 
 interface SelectInputProps {
@@ -16,13 +16,15 @@ export default function RadioInput({ name, options }: SelectInputProps) {
       <Radio.Group
       // onChange={onChange} value={value}
       >
-        {Object.entries(options).map(([key, value], index) => {
-          return (
-            <Radio key={"radio-" + index} value={key}>
-              {value}
-            </Radio>
-          );
-        })}
+        <Space direction="vertical">
+          {Object.entries(options).map(([key, value], index) => {
+            return (
+              <Radio key={"radio-" + index} value={key}>
+                {value}
+              </Radio>
+            );
+          })}
+        </Space>
       </Radio.Group>
     </Form.Item>
   );

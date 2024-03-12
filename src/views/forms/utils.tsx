@@ -1,13 +1,13 @@
 import { Field } from "types/schema";
-import TextInput from "./inputs/TextInput";
-import ImageUpload from "./inputs/ImageUpload";
-import NumberInput from "./inputs/NumberInput";
-import RadioInput from "./inputs/RadioInput";
-import SelectInput from "./inputs/SelectInput";
-import CheckboxInput from "./inputs/CheckboxInput";
-import DynamicList from "./inputs/DynamicList";
-import DynamicMap from "./inputs/DynamicMap";
-import DynamicMessage from "./inputs/DynamicMessage";
+import TextInput from "./components/inputs/TextInput";
+import ImageUpload from "./components/inputs/ImageUpload";
+import NumberInput from "./components/inputs/NumberInput";
+import RadioInput from "./components/inputs/RadioInput";
+import SelectInput from "./components/inputs/SelectInput";
+import CheckboxInput from "./components/inputs/CheckboxInput";
+import DynamicList from "./components/DynamicList";
+import DynamicMap from "./components/DynamicMap";
+import DynamicMessage from "./components/DynamicMessage";
 
 export function transformOptions(dictionary: {
   [key: string]: string;
@@ -18,17 +18,21 @@ export function transformOptions(dictionary: {
   }));
 }
 
-export const mapTypeToComponent = (field: Field) => {
+export const mapTypeToComponent = (
+  field: Field,
+  hideLabel?: boolean,
+  props?: any
+) => {
   const fkind = field.kind;
   const ftype = field.type;
 
   switch (fkind) {
     case "map":
-      return <DynamicMap />;
+      return <DynamicMap field={field} />;
     case "list":
       return (
         // @ts-ignore
-        <DynamicList name={field.name} type={field.type} value={field.value} />
+        <DynamicList field={field} />
       );
     default:
       break;
@@ -36,19 +40,20 @@ export const mapTypeToComponent = (field: Field) => {
 
   switch (ftype) {
     case "string":
-      return <TextInput name={field.name} />;
+      return <TextInput name={field.name} hideLabel={hideLabel} />;
 
     case "bytes":
       return <ImageUpload name={field.name} />;
 
     case "int32":
-      return <NumberInput name={field.name} />;
+      return <NumberInput name={field.name} hideLabel={hideLabel} />;
 
     case "message":
       return (
         <DynamicMessage
           name={field.name}
           optional={field.optional}
+          // @ts-ignore
           value={field.value}
         />
       );

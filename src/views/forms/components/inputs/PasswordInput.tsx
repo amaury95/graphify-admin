@@ -1,6 +1,6 @@
 import React from "react";
 import { capitalise } from "utils/functions";
-import { DynamicInputProps } from "../types";
+import { DynamicInputProps } from "../../types";
 import { Form, Input } from "antd";
 
 export default function PasswordInput({ name }: DynamicInputProps) {

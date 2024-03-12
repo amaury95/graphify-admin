@@ -1,6 +1,6 @@
 import { Checkbox, Form } from "antd";
 import { capitalise } from "utils/functions";
-import { DynamicInputProps } from "../types";
+import { DynamicInputProps } from "../../types";
 
 export default function CheckboxInput({ name }: DynamicInputProps) {
   return (
