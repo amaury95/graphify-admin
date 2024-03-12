@@ -12,7 +12,7 @@ interface DynamicListProps {
 }
 
 export default function DynamicList({ field }: DynamicListProps) {
-  const { name, type, value: schema, options, optional } = field;
+  const { name, type, options, optional } = field;
 
   switch (type) {
     case "message":
@@ -63,7 +63,7 @@ export default function DynamicList({ field }: DynamicListProps) {
 }
 
 function MessageList({ field }: DynamicListProps) {
-  const { name, value: schema } = field;
+  const { name, schema } = field;
   return (
     <div>
       <Flex justify="flex-end">
@@ -86,10 +86,7 @@ function MessageList({ field }: DynamicListProps) {
                   />
                 }
               >
-                {schema && (
-                  // @ts-ignore
-                  <FormInputs schema={schema} />
-                )}
+                {schema && <FormInputs schema={schema} />}
               </Card>
             ))}
             <Form.Item>

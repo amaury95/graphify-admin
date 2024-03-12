@@ -8,13 +8,13 @@ const { Text } = Typography;
 interface DynamicMessageProps {
   name: string;
   optional?: boolean;
-  value?: Element;
+  schema?: Element;
 }
 
 export default function DynamicMessage({
   name,
   optional,
-  value: schema,
+  schema,
 }: DynamicMessageProps) {
   return (
     <div>

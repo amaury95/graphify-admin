@@ -9,18 +9,26 @@ export interface Element {
   oneofs: { [field: string]: { [option: string]: Element } };
 }
 
-export interface Field {
-  name: string;
-  type?: FieldType;
-  kind?: FieldKind;
-  key?: Key;
-  value?: Element | Field;
-  options?: { [key: string]: string };
+export interface Value {
   optional?: boolean;
+  type: Type;
+  // type = message
+  schema?: Element;
+  // type = enum
+  options?: { [key: string]: string };
 }
 
-export type FieldKind = "map" | "list" | undefined;
-export type FieldType =
+export interface Field extends Value {
+  name: string;
+  kind?: Kind;
+
+  // kind = map
+  key?: Key;
+  value?: Value;
+}
+
+export type Kind = "map" | "list" | undefined;
+export type Type =
   | "string"
   | "bytes"
   | "int32"

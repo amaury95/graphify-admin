@@ -1,5 +1,3 @@
-import React, { useEffect } from "react";
-
 import { Button, Card, Flex, Form, Typography } from "antd";
 import { CloseOutlined, PlusOutlined } from "@ant-design/icons";
 
@@ -14,11 +12,7 @@ interface DynamicMapProps {
 }
 
 export default function DynamicMap({ field }: DynamicMapProps) {
-  const { name, type, key, value, options, optional } = field;
-
-  useEffect(() => {
-    console.log(field);
-  }, [field]);
+  const { name, key, value } = field;
 
   return (
     <div>
@@ -43,8 +37,7 @@ export default function DynamicMap({ field }: DynamicMapProps) {
                 }
               >
                 {(value as Field)?.type === "message" ? (
-                  // @ts-ignore
-                  <FormInputs schema={value.value} />
+                  <FormInputs schema={value!.schema!} />
                 ) : (
                   <Flex vertical>
                     {/* key */}
@@ -61,7 +54,6 @@ export default function DynamicMap({ field }: DynamicMapProps) {
                       field={
                         {
                           name: "value",
-                          // @ts-ignore
                           type: value!.type,
                         } as Field
                       }

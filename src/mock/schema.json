@@ -1,122 +1,133 @@
 {
-  "nodes": {
-    "admin_accounts": {
+  "edges": {
+    "borrows": {
       "fields": {
-        "_key": { "type": "string", "name": "_key" },
-        "firstName": { "type": "string", "name": "firstName" },
-        "lastName": { "type": "string", "name": "lastName" },
-        "email": { "type": "string", "name": "email" },
-        "avatar": { "optional": true, "type": "bytes", "name": "avatar" },
-        "notes": { "optional": true, "type": "string", "name": "notes" }
+        "_from": { "name": "_from", "type": "string" },
+        "_key": { "name": "_key", "type": "string" },
+        "_to": { "name": "_to", "type": "string" },
+        "date": { "name": "date", "optional": true, "type": "int64" }
+      },
+      "oneofs": {}
+    }
+  },
+  "nodes": {
+    "admins": {
+      "fields": {
+        "_key": { "name": "_key", "type": "string" },
+        "avatar": { "name": "avatar", "optional": true, "type": "bytes" },
+        "email": { "name": "email", "type": "string" },
+        "firstName": { "name": "firstName", "type": "string" },
+        "lastName": { "name": "lastName", "type": "string" },
+        "notes": { "name": "notes", "optional": true, "type": "string" }
       },
       "oneofs": {}
     },
     "books": {
       "fields": {
-        "_key": { "type": "string", "name": "_key" },
-        "title": { "type": "string", "name": "title" },
-        "author": { "type": "string", "name": "author" },
-        "mainReview": {
-          "optional": true,
-          "value": {
-            "fields": {
-              "message": { "type": "string", "name": "message" },
-              "name": { "type": "string", "name": "name" }
-            },
-            "oneofs": {}
-          },
-          "type": "message",
-          "name": "mainReview"
-        },
-        "reviews": {
-          "kind": "list",
-          "value": {
-            "fields": {
-              "message": { "type": "string", "name": "message" },
-              "name": { "type": "string", "name": "name" }
-            },
-            "oneofs": {}
-          },
-          "type": "message",
-          "name": "reviews"
-        },
-        "tags": { "kind": "list", "type": "string", "name": "tags" },
+        "_key": { "name": "_key", "type": "string" },
+        "author": { "name": "author", "type": "string" },
         "bookPrice": {
           "kind": "map",
+          "name": "bookPrice",
           "key": { "type": "string" },
-          "value": { "type": "int32" },
-          "name": "bookPrice"
+          "value": { "type": "int32" }
         },
-        "chapters": {
-          "kind": "map",
-          "key": { "type": "int32" },
-          "value": { "type": "string" },
-          "name": "chapters"
-        },
-        "characters": {
-          "kind": "map",
-          "key": { "type": "string" },
-          "value": {
-            "value": {
-              "fields": {
-                "name": { "type": "string", "name": "name" },
-                "role": { "type": "string", "name": "role" }
-              },
-              "oneofs": {}
-            },
-            "type": "message"
-          },
-          "name": "characters"
-        },
-        "portrait": { "type": "bytes", "name": "portrait" },
-        "gallery": { "kind": "list", "type": "bytes", "name": "gallery" },
         "category": {
+          "name": "category",
           "options": {
             "0": "CATEGORY_UNSPECIFIED",
             "1": "CATEGORY_DRAMA",
             "2": "CATEGORY_HORROR"
           },
-          "type": "enum",
-          "name": "category"
-        }
+          "type": "enum"
+        },
+        "chapters": {
+          "key": { "type": "int32" },
+          "kind": "map",
+          "name": "chapters",
+          "value": { "type": "string" }
+        },
+        "characters": {
+          "key": { "type": "string" },
+          "kind": "map",
+          "name": "characters",
+          "value": {
+            "schema": {
+              "fields": {
+                "name": { "name": "name", "type": "string" },
+                "role": { "name": "role", "type": "string" }
+              },
+              "oneofs": {}
+            },
+            "type": "message"
+          }
+        },
+        "gallery": { "kind": "list", "name": "gallery", "type": "bytes" },
+        "mainReview": {
+          "name": "mainReview",
+          "optional": true,
+          "schema": {
+            "fields": {
+              "message": { "name": "message", "type": "string" },
+              "name": { "name": "name", "type": "string" }
+            },
+            "oneofs": {}
+          },
+          "type": "message"
+        },
+        "portrait": { "name": "portrait", "type": "bytes" },
+        "reviews": {
+          "kind": "list",
+          "name": "reviews",
+          "schema": {
+            "fields": {
+              "message": { "name": "message", "type": "string" },
+              "name": { "name": "name", "type": "string" }
+            },
+            "oneofs": {}
+          },
+          "type": "message"
+        },
+        "tags": { "kind": "list", "name": "tags", "type": "string" },
+        "title": { "name": "title", "type": "string" }
       },
       "oneofs": {
         "Type": {
-          "novel": {
+          "Academic": {
             "fields": {
-              "genre": { "type": "string", "name": "genre" },
-              "publicationYear": { "type": "int32", "name": "publicationYear" }
+              "edition": { "name": "edition", "type": "int32" },
+              "subject": { "name": "subject", "type": "string" }
             },
             "oneofs": {}
           },
-          "shortStory": {
+          "Biography": {
             "fields": {
-              "lengthPages": { "type": "int32", "name": "lengthPages" },
-              "isCollection": { "type": "bool", "name": "isCollection" }
-            },
-            "oneofs": {}
-          },
-          "academic": {
-            "fields": {
-              "subject": { "type": "string", "name": "subject" },
-              "edition": { "type": "int32", "name": "edition" }
-            },
-            "oneofs": {}
-          },
-          "poetry": {
-            "fields": {
-              "style": { "type": "string", "name": "style" },
-              "isAnthology": { "type": "bool", "name": "isAnthology" }
-            },
-            "oneofs": {}
-          },
-          "biography": {
-            "fields": {
-              "subjectPerson": { "type": "string", "name": "subjectPerson" },
               "notableAchievements": {
-                "type": "string",
-                "name": "notableAchievements"
-              }
+                "name": "notableAchievements",
+                "type": "string"
+              },
+              "subjectPerson": { "name": "subjectPerson", "type": "string" }
+            },
+            "oneofs": {}
+          },
+          "Novel": {
+            "fields": {
+              "genre": { "name": "genre", "type": "string" },
+              "publicationYear": { "name": "publicationYear", "type": "int32" }
+            },
+            "oneofs": {}
+          },
+          "Poetry": {
+            "fields": {
+              "isAnthology": { "name": "isAnthology", "type": "bool" },
+              "style": { "name": "style", "type": "string" }
+            },
+            "oneofs": {}
+          },
+          "ShortStory": {
+            "fields": {
+              "isCollection": { "name": "isCollection", "type": "bool" },
+              "lengthPages": { "name": "lengthPages", "type": "int32" }
             },
             "oneofs": {}
           }
@@ -125,21 +136,10 @@
     },
     "clients": {
       "fields": {
-        "_key": { "type": "string", "name": "_key" },
-        "name": { "type": "string", "name": "name" },
-        "email": { "type": "string", "name": "email" },
-        "member": { "type": "bool", "name": "member" }
-      },
-      "oneofs": {}
-    }
-  },
-  "edges": {
-    "borrows": {
-      "fields": {
-        "_key": { "type": "string", "name": "_key" },
-        "_from": { "type": "string", "name": "_from" },
-        "_to": { "type": "string", "name": "_to" },
-        "date": { "optional": true, "type": "int64", "name": "date" }
+        "_key": { "name": "_key", "type": "string" },
+        "email": { "name": "email", "type": "string" },
+        "member": { "name": "member", "type": "bool" },
+        "name": { "name": "name", "type": "string" }
       },
       "oneofs": {}
     }

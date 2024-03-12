@@ -30,10 +30,7 @@ export const mapTypeToComponent = (
     case "map":
       return <DynamicMap field={field} />;
     case "list":
-      return (
-        // @ts-ignore
-        <DynamicList field={field} />
-      );
+      return <DynamicList field={field} />;
     default:
       break;
   }
@@ -53,8 +50,7 @@ export const mapTypeToComponent = (
         <DynamicMessage
           name={field.name}
           optional={field.optional}
-          // @ts-ignore
-          value={field.value}
+          schema={field.schema}
         />
       );
 
