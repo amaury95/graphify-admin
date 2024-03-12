@@ -1,11 +1,13 @@
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { Button, Flex, Modal, Typography } from "antd";
 import Search from "antd/es/input/Search";
+
 import List from "./List";
-import { useEffect, useState } from "react";
 import CreateNewForm from "views/forms/CreateForm";
-import { schema } from "mock/schema";
-import { useLocation } from "react-router-dom";
+// import { schema } from "mock/schema";
 import { capitalise, makeSingular } from "utils/functions";
+import { useSchema } from "hooks/api";
 
 const { Title } = Typography;
 
@@ -48,6 +50,16 @@ export default function Tables() {
     }
   }, [pathname]);
 
+  const { data, loading, error } = useSchema();
+
+  if (loading) {
+    return <div>loading</div>;
+  }
+
+  if (error) {
+    return <div>error</div>;
+  }
+
   return (
     <Flex vertical gap={20}>
       {/* Header */}
@@ -86,7 +98,7 @@ export default function Tables() {
         onCancel={handleCancel}
         okText="Submit"
       >
-        <CreateNewForm schema={schema["nodes"]["books"] as any} />
+        {<CreateNewForm schema={data["nodes"]["books"]} />}
       </Modal>
     </Flex>
   );

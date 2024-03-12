@@ -4,13 +4,15 @@ import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import AppRoutes from "routes";
 import { ConfigProvider } from "antd";
+import Auth from "api/Auth";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <ConfigProvider >
+    {/* <Auth /> */}
+    <ConfigProvider>
       <AppRoutes />
     </ConfigProvider>
   </React.StrictMode>

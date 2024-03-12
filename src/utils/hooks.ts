@@ -26,7 +26,7 @@ interface FetchResult<T> {
 }
 export function useFetch<T>(source: () => Promise<T>): FetchResult<T> {
   const [data, setData] = useState<T>();
-  const [loading, setLoading] = useState<boolean>();
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error>();
   const [refetch, doRefetch] = useToggle();
 
