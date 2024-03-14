@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import {
-  BrowserRouter as Router,
+  HashRouter as Router,
   Routes,
   Route,
   Outlet,
+  Navigate,
 } from "react-router-dom";
 
 import { FloatButton, Layout } from "antd";
@@ -14,7 +15,9 @@ import PageNotFound from "views/PageNotFound";
 import Nav from "layout/nav";
 import { Header } from "antd/es/layout/layout";
 import TopNav from "layout/header";
-import SchemaProvider from "providers/schema";
+import SchemaProvider from "providers/SchemaProvider";
+import { AuthProvider, useAuth } from "providers/AuthProvider";
+import { Login } from "views/auth/Login";
 
 const { Sider, Content } = Layout;
 
@@ -79,31 +82,47 @@ function AppLayout() {
   );
 }
 
+// Everything under this layout runs only when authorized
+function AuthorizedLayout() {
+  const { loggedIn, loading } = useAuth();
+
+  if (loading) return <h3>Loading...</h3>;
+
+  if (!loggedIn) return <Navigate to="/login" />;
+
+  return <Outlet />;
+}
+
 export default function AppRoutes() {
   return (
-    <Router>
-      <Routes>
-        {/* Home */}
-        {/* Login */}
-        {/* <Route index element={<Home />} /> */}
+    <AuthProvider>
+      <Router>
+        <Routes>
+          {/* Home */}
+          {/* Login */}
+          {/* <Route index element={<Home />} /> */}
 
-        {/* App Dashboard */}
-        <Route element={<AppLayout />}>
-          <Route index element={<div />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path=":collection" element={<Tables />} />
+          <Route path="login" element={<Login />} />
+          <Route element={<AuthorizedLayout />}>
+            {/* App Dashboard */}
+            <Route element={<AppLayout />}>
+              <Route index element={<div />} />
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path=":collection" element={<Tables />} />
 
-          <Route path="*" element={<PageNotFound />} />
-          {/* <Route path="compounds/" element={<CompoundsView />}>
+              <Route path="*" element={<PageNotFound />} />
+              {/* <Route path="compounds/" element={<CompoundsView />}>
             <Route index element={<CompoundsList />} />
             <Route path=":id" element={<CompoundDetails />} />
-          </Route>
-          <Route path="graph/" element={<GraphView />}>
+            </Route>
+            <Route path="graph/" element={<GraphView />}>
             <Route index element={<Chart />} />
-          </Route>
+            </Route>
           */}
-        </Route>
-      </Routes>
-    </Router>
+            </Route>
+          </Route>
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }

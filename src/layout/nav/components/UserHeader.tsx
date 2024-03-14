@@ -2,6 +2,7 @@ import React from "react";
 import { Flex, Avatar, Typography, Button } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { LogoutOutlined } from "@ant-design/icons";
+import { useAuth } from "providers/AuthProvider";
 
 const { Text } = Typography;
 
@@ -15,7 +16,7 @@ const titleStyle: React.CSSProperties = {
 };
 
 const collapsedContainerStyle: React.CSSProperties = {
-  paddingBottom: "10px"
+  paddingBottom: "10px",
 };
 
 interface UserHeaderProps {
@@ -23,6 +24,7 @@ interface UserHeaderProps {
 }
 
 export default function UserHeader({ collapsed }: UserHeaderProps) {
+  const { logout, account, loading } = useAuth();
   if (collapsed) {
     return (
       <Flex justify="center" align="center" style={collapsedContainerStyle}>
@@ -47,7 +49,7 @@ export default function UserHeader({ collapsed }: UserHeaderProps) {
         <Flex vertical>
           {/* Name */}
           <Text style={nameStyle} className="sidebar-text">
-            Tisha Norton
+            {account?.firstName} {account?.lastName}
           </Text>
           {/* Title */}
           <Text style={titleStyle} className="sidebar-text">
@@ -57,7 +59,12 @@ export default function UserHeader({ collapsed }: UserHeaderProps) {
       </Flex>
 
       {/* Log out */}
-      <Button type="text" icon={<LogoutOutlined />} />
+      <Button
+        type="text"
+        icon={<LogoutOutlined />}
+        onClick={logout}
+        disabled={loading}
+      />
     </Flex>
   );
 }

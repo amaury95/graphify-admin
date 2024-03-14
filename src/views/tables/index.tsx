@@ -6,7 +6,7 @@ import Search from "antd/es/input/Search";
 import List from "./List";
 import CreateNewForm from "views/forms/CreateForm";
 import { capitalise, makeSingular } from "utils/functions";
-import { useSchema } from "providers/schema";
+import { useSchema } from "providers/SchemaProvider";
 
 const { Title } = Typography;
 
