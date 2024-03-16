@@ -1,4 +1,4 @@
-import { useSchema as useFetchSchema } from "hooks/api";
+import { useApiSchema as useFetchSchema } from "hooks/api";
 import { PropsWithChildren, createContext, useContext } from "react";
 import { Schema } from "types/schema";
 

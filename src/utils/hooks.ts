@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
-type Function = () => void;
+export type Function = () => void;
 
 export function useToggle(): [boolean, Function] {
   const [state, setState] = useState<boolean>(true);

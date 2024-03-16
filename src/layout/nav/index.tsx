@@ -11,7 +11,7 @@ import { MockLogoText } from "mock/logo";
 import CustomMenu from "./components/Menu";
 import { getFooterItems, getMenuItems } from "./items";
 import { useLocation } from "react-router-dom";
-import { useSchema } from "providers/schema";
+import { useSchema } from "providers/SchemaProvider";
 
 interface NavProps {
   collapsed: boolean;
