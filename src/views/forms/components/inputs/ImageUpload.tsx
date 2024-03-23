@@ -9,7 +9,7 @@ import { useState } from "react";
 import { capitalise } from "utils/functions";
 
 interface ImageUploadProps {
-  name: string;
+  name: string | any[];
   maxCount?: number;
 }
 

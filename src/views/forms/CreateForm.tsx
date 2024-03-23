@@ -1,6 +1,7 @@
 import { Form } from "antd";
 import { Element } from "types/schema";
 import FormInputs from "./components/FormInputs";
+import { useEffect } from "react";
 
 // Map Types
 // string => Input
@@ -17,11 +18,15 @@ const formStyle: React.CSSProperties = { maxWidth: 600, minWidth: 400 };
 
 interface CreateNewFormProps {
   schema: Element;
+  form: any;
 }
 
-export default function CreateNewForm({ schema }: CreateNewFormProps) {
-  const [form] = Form.useForm();
+export default function CreateNewForm({ schema, form }: CreateNewFormProps) {
 
+  useEffect(() => {
+    console.log(schema)
+  }, [schema])
+  
   return (
     <Form
       labelCol={{ span: 6 }}
@@ -30,7 +35,9 @@ export default function CreateNewForm({ schema }: CreateNewFormProps) {
       name="dynamic_form_complex"
       style={formStyle}
       autoComplete="off"
-      initialValues={{ items: [{}] }}
+      // onFinish={() => {
+      //   onValuesChange(JSON.stringify(form.getFieldsValue(), null, 2));
+      // }}
     >
       {/* fields */}
       <FormInputs schema={schema} />
@@ -43,6 +50,7 @@ export default function CreateNewForm({ schema }: CreateNewFormProps) {
           </Typography>
         )}
       </Form.Item> */}
+
     </Form>
   );
 }

@@ -19,7 +19,7 @@ export interface Value {
 }
 
 export interface Field extends Value {
-  name: string;
+  name: string | any[];
   kind?: Kind;
 
   // kind = map

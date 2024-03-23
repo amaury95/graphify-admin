@@ -2,8 +2,9 @@ import { Button, Card, Flex, Form, Typography } from "antd";
 import { CloseOutlined, PlusOutlined } from "@ant-design/icons";
 
 import FormInputs, { FormInput } from "./FormInputs";
-import { capitalise } from "utils/functions";
+import { capitalise, getLabel } from "utils/functions";
 import { Field } from "types/schema";
+import { useEffect } from "react";
 
 const { Text } = Typography;
 
@@ -14,14 +15,18 @@ interface DynamicMapProps {
 export default function DynamicMap({ field }: DynamicMapProps) {
   const { name, key, value } = field;
 
+  useEffect(() => {
+    console.log(field);
+  }, [field]);
+
   return (
     <div>
       <Flex justify="flex-end">
-        <Text strong>{capitalise(name)}</Text>
+        <Text strong>{getLabel(name)}</Text>
       </Flex>
       <Form.List name={name}>
         {(fields, { add, remove }) => (
-          <>
+          <div style={{ display: "flex", rowGap: 16, flexDirection: "column" }}>
             {fields.map(({ key: keyN, name: nameN, ...restField }) => (
               <Card
                 size="small"
@@ -39,12 +44,12 @@ export default function DynamicMap({ field }: DynamicMapProps) {
                 {(value as Field)?.type === "message" ? (
                   <FormInputs schema={value!.schema!} />
                 ) : (
-                  <Flex vertical>
+                  <>
                     {/* key */}
                     <FormInput
                       field={
                         {
-                          name: "key",
+                          name: [nameN, "key"],
                           type: key!.type,
                         } as Field
                       }
@@ -53,12 +58,12 @@ export default function DynamicMap({ field }: DynamicMapProps) {
                     <FormInput
                       field={
                         {
-                          name: "value",
+                          name: [nameN, "value"],
                           type: value!.type,
                         } as Field
                       }
                     />
-                  </Flex>
+                  </>
                 )}
               </Card>
             ))}
@@ -73,7 +78,7 @@ export default function DynamicMap({ field }: DynamicMapProps) {
                 Add field
               </Button>
             </Form.Item>
-          </>
+          </div>
         )}
       </Form.List>
     </div>

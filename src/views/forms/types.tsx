@@ -1,7 +1,7 @@
 import { FormListFieldData } from "antd";
 
 export interface DynamicInputProps {
-  name: string;
+  name: string | any[];
   hideLabel?: boolean;
   props?: FormListFieldData;
 }

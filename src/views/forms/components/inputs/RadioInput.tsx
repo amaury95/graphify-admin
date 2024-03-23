@@ -1,15 +1,15 @@
 import { Form, Radio, Space } from "antd";
-import { capitalise } from "utils/functions";
+import { getLabel } from "utils/functions";
 
 interface SelectInputProps {
-  name: string;
+  name: string | any[];
   options: { [key: string]: string };
 }
 
 export default function RadioInput({ name, options }: SelectInputProps) {
   return (
     <Form.Item
-      label={capitalise(name)}
+      label={getLabel(name)}
       name={name}
       // rules={[{ required: true, message: "Please input your username!" }]}
     >

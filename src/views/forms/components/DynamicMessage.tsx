@@ -1,12 +1,12 @@
 import { Flex, Typography } from "antd";
 import { Element } from "types/schema";
-import { capitalise } from "utils/functions";
+import { getLabel } from "utils/functions";
 import FormInputs from "./FormInputs";
 
 const { Text } = Typography;
 
 interface DynamicMessageProps {
-  name: string;
+  name: string | any[];
   optional?: boolean;
   schema?: Element;
 }
@@ -20,7 +20,7 @@ export default function DynamicMessage({
     <div>
       <Flex justify="flex-end">
         <Text strong>
-          {capitalise(name)} {optional ? "" : "*"}
+          {getLabel(name)} {optional ? "" : "*"}
         </Text>
       </Flex>
 

@@ -1,12 +1,14 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Navigate, useLocation, useParams } from "react-router-dom";
-import { Button, Flex, Modal, Typography } from "antd";
+import { Button, Flex, Form, Modal, Typography } from "antd";
 import Search from "antd/es/input/Search";
 
 import List from "./List";
 import CreateNewForm from "views/forms/CreateForm";
 import { capitalise, makeSingular } from "utils/functions";
 import { useSchema } from "providers/SchemaProvider";
+import { useSubmit } from "utils/hooks";
+import { baseURL } from "hooks/api";
 
 const { Title } = Typography;
 
@@ -15,6 +17,28 @@ const buttonStyle: React.CSSProperties = {
 };
 
 export default function Tables() {
+  const { schema } = useSchema();
+  const { collection } = useParams();
+
+  const [form] = Form.useForm();
+
+  // api
+  const { onSubmit, loading } = useSubmit<string>(
+    useCallback(
+      async (data) =>
+        await fetch(baseURL + "/" + collection, {
+          credentials: "include",
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: data,
+        }),
+      [collection]
+    )
+  );
+
+  // modal
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const showModal = () => {
@@ -22,15 +46,22 @@ export default function Tables() {
   };
 
   const handleOk = () => {
+    // push data
+    // alert(formResponse);
+    // onValuesChange(JSON.stringify(form.getFieldsValue(), null, 2));
+    console.log("Submitting");
+    console.log(JSON.stringify(form.getFieldsValue(), null, 2));
+
+    // onSubmit(JSON.stringify(form.getFieldsValue(), null, 2))
+    // iterate through formValues and format it to response
     setIsModalOpen(false);
+    // form.setFieldsValue({})
   };
 
   const handleCancel = () => {
     setIsModalOpen(false);
+    // form.setFieldsValue({})
   };
-
-  const { schema } = useSchema();
-  const { collection } = useParams();
 
   if (!collection) return <Navigate to={"/"} />;
 
@@ -72,7 +103,7 @@ export default function Tables() {
         onCancel={handleCancel}
         okText="Submit"
       >
-        <CreateNewForm schema={schema.nodes[collection]} />
+        <CreateNewForm schema={schema.nodes[collection]} form={form} />
       </Modal>
     </Flex>
   );
