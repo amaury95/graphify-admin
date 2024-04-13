@@ -3,7 +3,7 @@ import { Navigate, useParams } from "react-router-dom";
 import { Element, Field } from "utils/schema";
 import { useObject, Nested } from "../../utils/useObject";
 import { StackViewProvider, useStackView } from "../../provider/StackView";
-import { useState } from "react";
+import { KeyInput } from "../components/KeyInput";
 
 export function ResourcePage() {
   const { nodes } = useSchema();
@@ -58,74 +58,103 @@ function Form({ path, definition, ...nested }: FormProps<Element>) {
             )}
           </>
         ))}
+      {Object.entries(definition.oneofs).map(([name, oneof]) => (
+        <div>
+          <h4>{name}</h4>
+          {Object.entries(oneof).map(([option]) => (
+            <button
+              onClick={() => nested.set({ [option]: null }, [...path, name])}
+            >
+              {option}
+            </button>
+          ))}
+          {Object.entries(oneof).map(([option, schema]) => (
+            <>
+              {nested.get([...path, name, option]) !== undefined && (
+                <FormField
+                  definition={{ ...schema, name: option }}
+                  path={[...path, name, option]}
+                  {...nested}
+                />
+              )}
+            </>
+          ))}
+        </div>
+      ))}
     </div>
   );
 }
 
 function ListField({ path, definition, ...nested }: FormProps<Field>) {
   return (
-    <ul>
-      {(nested.get(path) ?? []).map((_: any, index: number) => (
+    <>
+      <h4>{definition.name}</h4>
+      <ul>
+        {(nested.get(path) ?? []).map((_: any, index: number) => (
+          <li>
+            <FormField
+              key={index}
+              definition={definition}
+              path={[...path, index]}
+              {...nested}
+            />
+            <button
+              onClick={() =>
+                nested.set(
+                  nested.get(path).filter((_: any, i: number) => i !== index),
+                  path
+                )
+              }
+            >
+              remove
+            </button>
+          </li>
+        ))}
         <li>
-          <FormField
-            key={index}
-            definition={definition}
-            path={[...path, index]}
-            {...nested}
-          />
           <button
             onClick={() =>
-              nested.set(
-                nested.get(path).filter((_: any, i: number) => i !== index),
-                path
-              )
+              nested.set(undefined, [...path, nested.get(path)?.length ?? 0])
             }
           >
-            remove
+            Add {definition.name}
           </button>
         </li>
-      ))}
-      <li>
-        <button
-          onClick={() =>
-            nested.set(undefined, [...path, nested.get(path)?.length ?? 0])
-          }
-        >
-          Add {definition.name}
-        </button>
-      </li>
-    </ul>
+      </ul>
+    </>
   );
 }
 
 function MapField({ path, definition, ...nested }: FormProps<Field>) {
   return (
-    <ul>
-      {Object.entries(nested.get(path) ?? {}).map(([name, value]) => (
+    <>
+      <h4>{definition.name}</h4>
+      <ul>
+        {Object.entries(nested.get(path) ?? {}).map(([name, value]) => (
+          <li>
+            <FormField
+              key={name}
+              definition={{ ...definition.value, name }}
+              path={[...path, name]}
+              {...nested}
+            />
+            <button
+              onClick={() => {
+                const { [name]: unset, ...rest } = nested.get(path);
+                nested.set(rest, path);
+              }}
+            >
+              remove (-)
+            </button>
+          </li>
+        ))}
         <li>
-          <FormField
-            key={name}
-            definition={{ ...definition.value, name }}
-            path={[...path, name]}
-            {...nested}
+          <KeyInput
+            placeholder={"Set " + definition.name}
+            onSet={(val) => nested.set(undefined, [...path, val])}
           />
-          <button
-            onClick={() => {
-              const { [name]: unset, ...rest } = nested.get(path);
-              nested.set(rest, path);
-            }}
-          >
-            remove (-)
-          </button>
         </li>
-      ))}
-      <li>
-        <TextInput
-          placeholder={"Set " + definition.name}
-          onSet={(val) => nested.set(undefined, [...path, val])}
-        />
-      </li>
-    </ul>
+      </ul>
+    </>
   );
 }
 
@@ -134,6 +163,7 @@ function FormField({ path, definition, ...nested }: FormProps<Field>) {
   return (
     <>
       <div>
+        <h4>{definition.name}</h4>
         {definition.type === "message" && (
           <button
             onClick={() => {
@@ -145,6 +175,23 @@ function FormField({ path, definition, ...nested }: FormProps<Field>) {
             Set {definition.name}
           </button>
         )}
+        {definition.type === "enum" && (
+          <>
+            {Object.entries(definition.options!).map(([value, message]) => (
+              <div>
+                <label>
+                  <input
+                    type="radio"
+                    value={value}
+                    checked={nested.get(path) === value}
+                    onChange={(e) => nested.set(e.target.value, path)}
+                  />
+                  {message}
+                </label>
+              </div>
+            ))}
+          </>
+        )}
         {definition.type === "string" && (
           <input
             type="text"
@@ -153,45 +200,35 @@ function FormField({ path, definition, ...nested }: FormProps<Field>) {
             onChange={(e) => nested.set(e.target.value, path)}
           />
         )}
-        {(definition.type === "float" ||
-          definition.type === "int64" ||
-          definition.type === "int32") && (
+        {definition.type === "bool" && (
+          <>
+            <label htmlFor={definition.name}>{definition.name}</label>
+            <input
+              type="checkbox"
+              id={definition.name}
+              placeholder={definition.name}
+              value={nested.get(path)}
+              onChange={(e) => nested.set(e.target.checked, path)}
+            />
+          </>
+        )}
+        {definition.type === "float" && (
           <input
             type="number"
             placeholder={definition.name}
             value={nested.get(path)}
-            onChange={(e) => nested.set(e.target.value, path)}
+            onChange={(e) => nested.set(parseFloat(e.target.value), path)}
+          />
+        )}
+        {(definition.type === "int64" || definition.type === "int32") && (
+          <input
+            type="number"
+            placeholder={definition.name}
+            value={nested.get(path)}
+            onChange={(e) => nested.set(parseInt(e.target.value), path)}
           />
         )}
       </div>
-    </>
-  );
-}
-
-function TextInput({
-  placeholder,
-  onSet,
-}: {
-  placeholder?: string;
-  onSet(_: string): void;
-}) {
-  const [value, setValue] = useState<string>("");
-  return (
-    <>
-      <input
-        type="text"
-        placeholder={placeholder}
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-      />
-      <button
-        onClick={() => {
-          onSet(value);
-          setValue("");
-        }}
-      >
-        Set
-      </button>
     </>
   );
 }
