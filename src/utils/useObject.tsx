@@ -4,7 +4,7 @@ export interface Nested {
   get(path: (string | number)[]): any;
   set(val: any, path: (string | number)[]): void;
 }
-export function useObject(init: any): Nested {
+export function useObject(init: any) {
   const [value, setValue] = useState<any>(init);
 
   const get = useCallback(
@@ -59,6 +59,6 @@ export function useObject(init: any): Nested {
       return updatedValue;
     });
   }, []);
- 
-  return { get, set };
+
+  return { value, get, set };
 }

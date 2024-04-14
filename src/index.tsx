@@ -7,8 +7,9 @@ import { AuthProvider } from "provider/Auth";
 import { baseUrl } from "api/baseUrl";
 import { Layout } from "app/layouts/Layout";
 import { Authorized } from "app/layouts/Authorized";
-import { ResourcePage } from "app/pages/ResourcePage";
+import { ResourcesPage } from "app/pages/ResourcesPage";
 import { HomePage } from "app/pages/HomePage";
+import { ResourcePage } from "app/pages/ResourcePage";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -28,14 +29,14 @@ function Router() {
         <Route element={<Authorized />}>
           <Route element={<Layout />}>
             <Route index element={<HomePage />} />
-            <Route path=":resource" element={<ResourcePage />} />
+            <Route path=":resource" element={<ResourcesPage />} />
+            <Route path=":resource/:key" element={<ResourcePage />} />
           </Route>
         </Route>
       </Routes>
     </HashRouter>
   );
 }
-
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
