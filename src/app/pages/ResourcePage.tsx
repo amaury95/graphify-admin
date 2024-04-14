@@ -4,6 +4,9 @@ import { Element, Field } from "utils/schema";
 import { useObject, Nested } from "../../utils/useObject";
 import { StackViewProvider, useStackView } from "../../provider/StackView";
 import { KeyInput } from "../components/KeyInput";
+import { useSubmit } from "utils/hooks";
+import { ChangeEvent, useCallback, useState } from "react";
+import { baseUrl } from "api/baseUrl";
 
 export function ResourcePage() {
   const { nodes } = useSchema();
@@ -200,6 +203,13 @@ function FormField({ path, definition, ...nested }: FormProps<Field>) {
             onChange={(e) => nested.set(e.target.value, path)}
           />
         )}
+        {definition.type === "bytes" && (
+          <ImageUpload
+            name={definition.name}
+            value={nested.get(path)}
+            onUpload={(url) => nested.set(url, path)}
+          />
+        )}
         {definition.type === "bool" && (
           <>
             <label htmlFor={definition.name}>{definition.name}</label>
@@ -229,6 +239,46 @@ function FormField({ path, definition, ...nested }: FormProps<Field>) {
           />
         )}
       </div>
+    </>
+  );
+}
+
+function ImageUpload({
+  name,
+  value,
+  onUpload,
+}: {
+  name: string;
+  value?: string;
+  onUpload(url: string): void;
+}) {
+  const [file, setFile] = useState<File>();
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) setFile(e.target.files[0]);
+  };
+  const { onSubmit, loading } = useSubmit(
+    useCallback(async () => {
+      const formData = new FormData();
+      formData.append("file", file!);
+
+      const resp = await fetch(baseUrl + "/files/upload", {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      });
+      const [hash] = await resp.json();
+      onUpload(hash);
+    }, [file, onUpload])
+  );
+  return (
+    <>
+      {value && <img src={baseUrl + "/files/download/" + value} alt="imag" />}
+      <input type="file" placeholder={name} onChange={handleFileChange} />
+      {file && (
+        <button onClick={onSubmit} disabled={loading}>
+          Upload
+        </button>
+      )}
     </>
   );
 }
