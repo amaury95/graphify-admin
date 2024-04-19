@@ -2,13 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "index.css";
 import reportWebVitals from "reportWebVitals";
-import {
-  HashRouter,
-  Navigate,
-  Route,
-  Routes,
-  useParams,
-} from "react-router-dom";
+import { HashRouter, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "provider/Auth";
 import { baseUrl } from "api/baseUrl";
 import { Layout } from "app/layouts/Layout";
