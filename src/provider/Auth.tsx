@@ -6,6 +6,7 @@ import {
   useMemo,
 } from "react";
 import { useFetch, useSubmit } from "../utils/hooks";
+import { baseUrl } from "api/baseUrl";
 
 // CONTEXT
 type Admin = {
@@ -32,7 +33,7 @@ const AuthContext = createContext<IAuthContext>({
 
 export const useAuth = () => useContext(AuthContext);
 
-export function AuthProvider(props: PropsWithChildren<{ baseURL: string }>) {
+export function AuthProvider(props: PropsWithChildren) {
   const {
     data: account,
     loading: loadingAccount,
@@ -40,18 +41,18 @@ export function AuthProvider(props: PropsWithChildren<{ baseURL: string }>) {
     doRefetch: refetchAccount,
   } = useFetch(
     useCallback(async () => {
-      const resp = await fetch(props.baseURL + "/auth/account", {
+      const resp = await fetch(baseUrl + "/auth/account", {
         method: "GET",
         credentials: "include",
       });
       return resp.json();
-    }, [props.baseURL])
+    }, [])
   );
 
   const { onSubmit: login, loading: loggingIn } = useSubmit<LoginData>(
     useCallback(
       async (data) =>
-        await fetch(props.baseURL + "/auth/login", {
+        await fetch(baseUrl + "/auth/login", {
           credentials: "include",
           method: "POST",
           headers: {
@@ -62,7 +63,7 @@ export function AuthProvider(props: PropsWithChildren<{ baseURL: string }>) {
             password: data?.password,
           }),
         }),
-      [props.baseURL]
+      []
     ),
     refetchAccount
   );
@@ -70,11 +71,11 @@ export function AuthProvider(props: PropsWithChildren<{ baseURL: string }>) {
   const { onSubmit: logout, loading: loggingOut } = useSubmit(
     useCallback(
       async () =>
-        fetch(props.baseURL + "/auth/logout", {
+        fetch(baseUrl + "/auth/logout", {
           credentials: "include",
           method: "POST",
         }),
-      [props.baseURL]
+      []
     ),
     refetchAccount
   );
