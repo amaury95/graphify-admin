@@ -1,11 +1,5 @@
-import { baseUrl } from "api/baseUrl";
-import {
-  PropsWithChildren,
-  createContext,
-  useCallback,
-  useContext,
-} from "react";
-import { useFetch } from "utils/hooks";
+import { useFetchSchema } from "api/resources";
+import { PropsWithChildren, createContext, useContext } from "react";
 import { Schema } from "utils/schema";
 
 const SchemaContext = createContext<Schema>({
@@ -17,15 +11,7 @@ const SchemaContext = createContext<Schema>({
 export const useSchema = () => useContext(SchemaContext);
 
 export function SchemaProvider({ children }: PropsWithChildren) {
-  const { data, loading } = useFetch(
-    useCallback(async (): Promise<Schema> => {
-      const resp = await fetch(baseUrl + "/schema", {
-        method: "GET",
-        credentials: "include",
-      });
-      return resp.json();
-    }, [])
-  );
+  const { data, loading } = useFetchSchema();
 
   if (loading || !data) return <div>loading...</div>;
 
