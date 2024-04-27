@@ -10,17 +10,28 @@ import { ResourcesPage } from "app/pages/ResourcesPage";
 import { HomePage } from "app/pages/HomePage";
 import { ResourcePage } from "app/pages/ResourcePage";
 import { NextUIProvider } from "@nextui-org/react";
+import { SchemaProvider } from "provider/Schema";
+import { ThemeProvider } from "next-themes";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <AuthProvider>
-      <NextUIProvider>
-        <Router />
-      </NextUIProvider>
-    </AuthProvider>
+    <SchemaProvider>
+      <AuthProvider>
+        <NextUIProvider>
+          {/* @ts-ignore */}
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            themes={["light", "dark"]}
+          >
+            <Router />
+          </ThemeProvider>
+        </NextUIProvider>
+      </AuthProvider>
+    </SchemaProvider>
   </React.StrictMode>
 );
 
