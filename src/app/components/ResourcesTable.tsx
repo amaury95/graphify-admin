@@ -67,13 +67,12 @@ export function ResourcesTable({
 
   const headers = useMemo(
     () =>
-      Object.values(specs.fields)
+      specs.fields
         .filter((f) => f.type !== "message" && !f.kind)
         .filter((_, index) => index < 5)
         .map((field) => ({
           name: field.name.replace(/^_+/, ""),
           uid: field.name,
-          field,
         })),
     [specs.fields]
   );
@@ -128,7 +127,7 @@ export function ResourcesTable({
               ) : (
                 <TableCell>
                   <RenderField
-                    field={specs.fields[columnName]}
+                    field={specs.fields.find((f) => f.name === columnName)!}
                     value={item[columnName]}
                   />
                 </TableCell>

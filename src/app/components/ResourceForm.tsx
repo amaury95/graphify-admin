@@ -37,27 +37,27 @@ interface FormProps<T> extends Nested {
 function Form({ path, definition, ...nested }: FormProps<Element>) {
   return (
     <div className="flex flex-col gap-4">
-      {Object.entries(definition.fields)
-        .filter(([name]) => !["_key", "_from", "_to"].includes(name))
-        .map(([name, field]) => (
+      {definition.fields
+        .filter(({ name }) => !["_key", "_from", "_to"].includes(name))
+        .map((field) => (
           <>
             {field.kind === "list" ? (
               <ListField
-                key={name}
+                key={field.name}
                 definition={field}
                 path={[...path, field.name]}
                 {...nested}
               />
             ) : field.kind === "map" ? (
               <MapField
-                key={name}
+                key={field.name}
                 definition={field}
                 path={[...path, field.name]}
                 {...nested}
               />
             ) : (
               <FormField
-                key={name}
+                key={field.name}
                 definition={field}
                 path={[...path, field.name]}
                 {...nested}
