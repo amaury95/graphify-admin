@@ -16,6 +16,8 @@ import {
 } from "@nextui-org/react";
 import { Link } from "react-router-dom";
 import { DownloadIcon } from "app/assets/icons/Download";
+import { simplifyString } from "../../utils/simplifyString";
+import { DownloadLink } from "./DownloadLink";
 
 const actions = {
   name: "actions",
@@ -161,7 +163,7 @@ function RenderField({ value, field }: { value: any; field: Field }) {
 
     case "bytes":
       return (
-        <Link to={`${baseUrl}/files/download/${value}`}>
+        <DownloadLink value={value}>
           <Button
             size="sm"
             radius="full"
@@ -171,19 +173,11 @@ function RenderField({ value, field }: { value: any; field: Field }) {
           >
             Download
           </Button>
-        </Link>
+        </DownloadLink>
       );
 
     default:
       return <p>{value}</p>;
-  }
-}
-function simplifyString(input: string): string {
-  const index = input.indexOf("_");
-  if (index !== -1) {
-    return input.substring(index + 1).toLowerCase();
-  } else {
-    return input.toLowerCase();
   }
 }
 

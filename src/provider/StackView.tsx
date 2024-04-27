@@ -18,7 +18,10 @@ const StackViewContext = createContext<IStack<JSX.Element>>({
   reset: () => {},
 });
 export const useStackView = () => useContext(StackViewContext);
-export function StackViewProvider({ children }: PropsWithChildren) {
+export function StackViewProvider({
+  back,
+  children,
+}: PropsWithChildren<{ back(onBack: Function): JSX.Element }>) {
   const [views, setViews] = useState<JSX.Element[]>([]);
 
   const push = useCallback(
@@ -41,7 +44,7 @@ export function StackViewProvider({ children }: PropsWithChildren) {
   return (
     <StackViewContext.Provider value={{ push, pop, reset }}>
       {element}
-      {views.length > 0 && <button onClick={pop}>Back</button>}
+      {views.length > 0 && back(pop)}
     </StackViewContext.Provider>
   );
 }

@@ -60,5 +60,7 @@ export function useObject(init: any) {
     });
   }, []);
 
-  return { value, get, set };
+  const clear = useCallback(() => setValue({}), []);
+
+  return { value, get, set, clear };
 }

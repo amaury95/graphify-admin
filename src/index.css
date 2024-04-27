@@ -20,3 +20,8 @@ code {
   width: 500px;
   height: 500px;
 }
+
+.form-wrapper {
+  @apply p-4 bg-default-50 rounded-xl;
+}
+ 

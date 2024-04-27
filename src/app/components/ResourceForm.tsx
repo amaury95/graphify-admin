@@ -1,50 +1,33 @@
-import { useNavigate } from "react-router-dom";
 import { Element, Field } from "utils/schema";
-import { useObject, Nested } from "../../utils/useObject";
-import { StackViewProvider, useStackView } from "../../provider/StackView";
-import { KeyInput } from "./KeyInput";
+import { Nested } from "utils/useObject";
+import { StackViewProvider, useStackView } from "provider/StackView";
 import { useSubmit } from "utils/hooks";
 import { ChangeEvent, useCallback, useState } from "react";
 import { baseUrl } from "api/baseUrl";
+import { Button, Checkbox, Input, Radio, RadioGroup } from "@nextui-org/react";
+import { camelCaseToNormal, simplifyString } from "utils/simplifyString";
+import { TrashIcon } from "app/assets/icons/Trash";
+import { DownloadIcon } from "app/assets/icons/Download";
+import { UploadIcon } from "app/assets/icons/Upload";
+import { DownloadLink } from "./DownloadLink";
 
 export function ResourceForm({
-  resource,
+  object,
   specs,
 }: {
-  resource: string;
+  object: Nested;
   specs: Element;
 }) {
-  const navigate = useNavigate();
-
-  const { value, ...nested } = useObject({});
-
-  const { onSubmit, loading } = useSubmit(
-    useCallback(async () => {
-      const resp = await fetch(baseUrl + "/" + resource, {
-        credentials: "include",
-        method: "POST",
-        body: JSON.stringify(value),
-      });
-      const [key] = await resp.json();
-      navigate(`/${resource}/${key}`);
-    }, [navigate, resource, value])
-  );
-
   return (
-    <>
-      <StackViewProvider>
-        <>
-          <Form definition={specs} {...nested} path={[]} />
-          <input
-            type="submit"
-            value="Submit"
-            onClick={onSubmit}
-            disabled={loading}
-          />
-        </>
-      </StackViewProvider>
-      <div>{JSON.stringify({ value })}</div>
-    </>
+    <StackViewProvider
+      back={(back) => (
+        <Button className="mt-6" onClick={() => back()}>
+          Continue
+        </Button>
+      )}
+    >
+      <Form definition={specs} {...object} path={[]} />
+    </StackViewProvider>
   );
 }
 interface FormProps<T> extends Nested {
@@ -53,7 +36,7 @@ interface FormProps<T> extends Nested {
 }
 function Form({ path, definition, ...nested }: FormProps<Element>) {
   return (
-    <div>
+    <div className="flex flex-col gap-4">
       {Object.entries(definition.fields)
         .filter(([name]) => !["_key", "_from", "_to"].includes(name))
         .map(([name, field]) => (
@@ -83,15 +66,26 @@ function Form({ path, definition, ...nested }: FormProps<Element>) {
           </>
         ))}
       {Object.entries(definition.oneofs).map(([name, oneof]) => (
-        <div>
-          <h4>{name}</h4>
-          {Object.entries(oneof).map(([option]) => (
-            <button
-              onClick={() => nested.set({ [option]: null }, [...path, name])}
-            >
-              {option}
-            </button>
-          ))}
+        <div className="form-wrapper">
+          <h4 className="text-medium">{name}</h4>
+
+          <div className="flex gap-2 my-4">
+            {Object.entries(oneof).map(([option]) => (
+              <Button
+                size="sm"
+                variant="flat"
+                color={
+                  nested.get([...path, name, option]) !== undefined
+                    ? "primary"
+                    : "default"
+                }
+                onClick={() => nested.set({ [option]: null }, [...path, name])}
+              >
+                {option}
+              </Button>
+            ))}
+          </div>
+
           {Object.entries(oneof).map(([option, schema]) => (
             <>
               {nested.get([...path, name, option]) !== undefined && (
@@ -110,148 +104,174 @@ function Form({ path, definition, ...nested }: FormProps<Element>) {
 }
 function ListField({ path, definition, ...nested }: FormProps<Field>) {
   return (
-    <>
-      <h4>{definition.name}</h4>
-      <ul>
+    <div className="form-wrapper">
+      <h4 className="text-medium capitalize mb-4">{definition.name}</h4>
+      <ul className="flex flex-col gap-2">
         {(nested.get(path) ?? []).map((_: any, index: number) => (
-          <li>
-            <FormField
-              key={index}
-              definition={definition}
-              path={[...path, index]}
-              {...nested}
-            />
-            <button
+          <li className="flex items-center gap-2">
+            <div className="grow">
+              <FormField
+                key={index}
+                definition={definition}
+                path={[...path, index]}
+                {...nested}
+              />
+            </div>
+            <DeleteButton
               onClick={() =>
                 nested.set(
                   nested.get(path).filter((_: any, i: number) => i !== index),
                   path
                 )
               }
-            >
-              remove
-            </button>
+            />
           </li>
         ))}
         <li>
-          <button
+          <Button
+            fullWidth
+            variant="light"
             onClick={() =>
               nested.set(undefined, [...path, nested.get(path)?.length ?? 0])
             }
           >
             Add {definition.name}
-          </button>
+          </Button>
         </li>
       </ul>
-    </>
+    </div>
   );
 }
 function MapField({ path, definition, ...nested }: FormProps<Field>) {
   return (
-    <>
-      <h4>{definition.name}</h4>
-      <ul>
+    <div className="form-wrapper">
+      <h4 className="text-medium mb-4">{camelCaseToNormal(definition.name)}</h4>
+      <ul className="flex flex-col gap-2">
         {Object.entries(nested.get(path) ?? {}).map(([name, value]) => (
-          <li>
-            <FormField
-              key={name}
-              definition={{ ...definition.value, name }}
-              path={[...path, name]}
-              {...nested}
-            />
-            <button
+          <li className="flex items-center gap-2">
+            <div className="grow">
+              <FormField
+                key={name}
+                definition={{ ...definition.value, name }}
+                path={[...path, name]}
+                {...nested}
+              />
+            </div>
+            <DeleteButton
               onClick={() => {
                 const { [name]: unset, ...rest } = nested.get(path);
                 nested.set(rest, path);
               }}
-            >
-              remove (-)
-            </button>
+            />
           </li>
         ))}
         <li>
           <KeyInput
-            placeholder={"Set " + definition.name}
+            placeholder={"New " + camelCaseToNormal(definition.name)}
             onSet={(val) => nested.set(undefined, [...path, val])}
           />
         </li>
       </ul>
-    </>
+    </div>
   );
 }
 function FormField({ path, definition, ...nested }: FormProps<Field>) {
-  const { push } = useStackView();
+  const { push, pop } = useStackView();
   return (
     <>
       <div>
-        <h4>{definition.name}</h4>
         {definition.type === "message" && (
-          <button
+          <Button
+            fullWidth
+            variant="flat"
             onClick={() => {
               push(
                 <Form definition={definition.schema!} {...nested} path={path} />
               );
             }}
           >
-            Set {definition.name}
-          </button>
+            Set {camelCaseToNormal(definition.name)}
+          </Button>
         )}
         {definition.type === "enum" && (
-          <>
-            {Object.entries(definition.options!).map(([value, message]) => (
-              <div>
-                <label>
-                  <input
-                    type="radio"
-                    value={value}
-                    checked={nested.get(path)?.toString() === value}
-                    onChange={(e) => nested.set(parseInt(e.target.value), path)}
-                  />
-                  {message}
-                </label>
-              </div>
-            ))}
-          </>
+          <div className="form-wrapper">
+            <RadioGroup
+              label={`Select ${camelCaseToNormal(definition.name)}`}
+              value={nested.get(path)?.toString()}
+              onValueChange={(e) => nested.set(parseInt(e), path)}
+            >
+              {Object.entries(definition.options!).map(([value, message]) => (
+                <Radio value={value} key={value} className="capitalize">
+                  {simplifyString(message)}
+                </Radio>
+              ))}
+            </RadioGroup>
+          </div>
         )}
         {definition.type === "string" && (
-          <input
+          <Input
             type="text"
-            placeholder={definition.name}
+            placeholder={camelCaseToNormal(definition.name)}
             value={nested.get(path)}
             onChange={(e) => nested.set(e.target.value, path)}
           />
         )}
         {definition.type === "bytes" && (
-          <ImageUpload
-            name={definition.name}
-            value={nested.get(path)}
-            onUpload={(url) => nested.set(url, path)}
-          />
+          <div className="flex items-center gap-2">
+            <Button
+              fullWidth
+              variant="flat"
+              endContent={<UploadIcon />}
+              onClick={() =>
+                push(
+                  <ImageUpload
+                    name={definition.name}
+                    onUpload={(url) => {
+                      nested.set(url, path);
+                      pop();
+                    }}
+                  />
+                )
+              }
+            >
+              Upload {camelCaseToNormal(definition.name)}
+            </Button>
+
+            <DownloadLink value={nested.get(path)}>
+              <Button
+                isIconOnly
+                color="primary"
+                variant="light"
+                radius="full"
+                size="sm"
+              >
+                <DownloadIcon />
+              </Button>
+            </DownloadLink>
+          </div>
         )}
         {definition.type === "bool" && (
-          <>
-            <label htmlFor={definition.name}>{definition.name}</label>
-            <input
-              type="checkbox"
-              id={definition.name}
-              placeholder={definition.name}
-              value={nested.get(path)}
-              onChange={(e) => nested.set(e.target.checked, path)}
-            />
-          </>
+          <div className="form-wrapper">
+            <Checkbox
+              isSelected={nested.get(path)}
+              onValueChange={(e) => nested.set(e, path)}
+            >
+              {camelCaseToNormal(definition.name)}
+            </Checkbox>
+          </div>
         )}
         {definition.type === "float" && (
-          <input
+          <Input
             type="number"
-            placeholder={definition.name}
+            placeholder={camelCaseToNormal(definition.name)}
             value={nested.get(path)}
             onChange={(e) => nested.set(parseFloat(e.target.value), path)}
           />
         )}
         {(definition.type === "int64" || definition.type === "int32") && (
-          <input
+          <Input
             type="number"
-            placeholder={definition.name}
+            placeholder={camelCaseToNormal(definition.name)}
             value={nested.get(path)}
             onChange={(e) => nested.set(parseInt(e.target.value), path)}
           />
@@ -260,13 +280,12 @@ function FormField({ path, definition, ...nested }: FormProps<Field>) {
     </>
   );
 }
+
 function ImageUpload({
   name,
-  value,
   onUpload,
 }: {
   name: string;
-  value?: string;
   onUpload(url: string): void;
 }) {
   const [file, setFile] = useState<File>();
@@ -288,23 +307,65 @@ function ImageUpload({
     }, [file, onUpload])
   );
   return (
-    <>
-      {value && (
-        <div>
-          <img
-            src={baseUrl + "/files/download/" + value}
-            alt="imag"
-            className="image"
-          />
-        </div>
-      )}
+    <div className="form-wrapper flex items-center gap-2">
+      <input
+        placeholder={name}
+        type="file"
+        name={name}
+        onChange={handleFileChange}
+        className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100"
+      />
+      <Button
+        isDisabled={!file}
+        onClick={onSubmit}
+        isLoading={loading}
+        variant="flat"
+      >
+        Upload
+      </Button>
+    </div>
+  );
+}
 
-      <input type="file" placeholder={name} onChange={handleFileChange} />
-      {file && (
-        <button onClick={onSubmit} disabled={loading}>
-          Upload
-        </button>
-      )}
-    </>
+function DeleteButton({ onClick }: { onClick: Function }) {
+  return (
+    <Button
+      isIconOnly
+      color="danger"
+      variant="light"
+      size="sm"
+      radius="full"
+      onClick={() => onClick()}
+    >
+      <TrashIcon />
+    </Button>
+  );
+}
+
+function KeyInput({
+  placeholder,
+  onSet,
+}: {
+  placeholder?: string;
+  onSet(_: string): void;
+}) {
+  const [value, setValue] = useState<string>("");
+  return (
+    <div className="flex items-center gap-2">
+      <Input
+        type="text"
+        placeholder={placeholder}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+      />
+      <Button
+        onClick={() => {
+          onSet(value);
+          setValue("");
+        }}
+      >
+        Add
+      </Button>
+    </div>
   );
 }
