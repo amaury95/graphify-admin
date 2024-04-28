@@ -49,9 +49,9 @@ export function ResourcesTable({
   specs: Element;
 }) {
   const { getResources } = useClient();
+
   const [count] = useState(10);
   const [offset, setOffset] = useState(0);
-
   const { data, loading } = useFetch(
     useCallback(
       async () => getResources(resource, count, offset),
@@ -87,7 +87,7 @@ export function ResourcesTable({
       shadow="sm"
       isStriped
       classNames={{
-        table: clsx({ "min-h-[400px]": loading }),
+        table: clsx({ "min-h-[160px]": loading }),
       }}
       bottomContent={pagination}
     >
@@ -99,10 +99,9 @@ export function ResourcesTable({
         )}
       </TableHeader>
       <TableBody
-        items={data?.items ?? []}
+        items={!data?.items || loading ? [] : data.items}
         isLoading={loading}
-        loadingContent={<Spinner color="white" />}
-        emptyContent={`No ${resource} found.`}
+        loadingContent={<Spinner />}
       >
         {(item: any) => (
           <TableRow key={item._key}>
