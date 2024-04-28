@@ -3,6 +3,7 @@ import { useSchema } from "provider/Schema";
 import {
   Button,
   Chip,
+  Image,
   Modal,
   ModalContent,
   ScrollShadow,
@@ -17,7 +18,6 @@ import { ListIcon } from "app/assets/icons/List";
 import { UsersIcon } from "app/assets/icons/Users";
 import { ConfigIcon } from "app/assets/icons/Config";
 import clsx from "clsx";
-import { CubeIcon } from "app/assets/icons/Cube";
 import { SearchInput, SearchProvider } from "../components/SearchInput";
 import { BellIcon } from "app/assets/icons/Bell";
 import { Bars3Icon } from "app/assets/icons/Bars3";
@@ -101,9 +101,11 @@ function Sidebar({ onClose }: { onClose?: Function }) {
         onClick={handleNavigate("/")}
       >
         <div className="text-primary">
-          <CubeIcon />
+          <Image src="/logo.png" width={35}  />
         </div>
-        <h1 className="ml-2 text-2xl font-bold tracking-wide grow">Graphify</h1>
+        <h1 className="ml-3 text-2xl font-bold tracking-wider grow">
+          Graphify
+        </h1>
         {onClose && (
           <Button
             isIconOnly

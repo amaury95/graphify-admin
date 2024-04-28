@@ -15,8 +15,8 @@ import { PlusIcon } from "app/assets/icons/Plus";
 import { Banner } from "app/components/Banner";
 import { useObject } from "utils/useObject";
 import { useSubmit } from "utils/hooks";
-import { baseUrl } from "api/baseUrl";
 import { ResourceForm } from "app/components/ResourceForm";
+import { useClient } from "provider/Service";
 
 export function ResourcesPage() {
   const navigate = useNavigate();
@@ -29,17 +29,13 @@ export function ResourcesPage() {
   );
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const { value, clear, ...object } = useObject({});
+  const { value, ...object } = useObject({});
+  const { createResource } = useClient();
   const { onSubmit, loading } = useSubmit(
     useCallback(async () => {
-      const resp = await fetch(baseUrl + "/" + resource, {
-        credentials: "include",
-        method: "POST",
-        body: JSON.stringify(value),
-      });
-      const [key] = await resp.json();
-      navigate(`/${resource}/${key}`);
-    }, [navigate, resource, value])
+      const key = await createResource(resource!, value);
+      if (!!key) navigate(`/${resource}/${key}`);
+    }, [createResource, navigate, resource, value])
   );
 
   if (!resource || !specs) return <Navigate to="/" />;
@@ -63,10 +59,15 @@ export function ResourcesPage() {
                 <ResourceForm object={object} specs={specs} />
               </ModalBody>
               <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
+                <Button variant="light" onPress={onClose}>
                   Cancel
                 </Button>
-                <Button color="primary" onPress={onSubmit} isLoading={loading}>
+                <Button
+                  color="secondary"
+                  variant="flat"
+                  onPress={onSubmit}
+                  isLoading={loading}
+                >
                   Create
                 </Button>
               </ModalFooter>
@@ -74,7 +75,11 @@ export function ResourcesPage() {
           )}
         </ModalContent>
       </Modal>
-      <Banner resource={resource} path={[{ name: "Home", link: "/" }]}>
+      <Banner
+        heading={resource}
+        resource={resource}
+        path={[{ name: "Home", link: "/" }]}
+      >
         <Button
           variant="flat"
           color="secondary"

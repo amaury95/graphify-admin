@@ -10,6 +10,7 @@ import { TrashIcon } from "app/assets/icons/Trash";
 import { DownloadIcon } from "app/assets/icons/Download";
 import { UploadIcon } from "app/assets/icons/Upload";
 import { DownloadLink } from "./DownloadLink";
+import { validObject } from "utils/valid";
 
 export function ResourceForm({
   object,
@@ -20,6 +21,7 @@ export function ResourceForm({
 }) {
   return (
     <StackViewProvider
+      position="bottom"
       back={(back) => (
         <Button className="mt-6" onClick={() => back()}>
           Continue
@@ -190,7 +192,8 @@ function FormField({ path, definition, ...nested }: FormProps<Field>) {
               );
             }}
           >
-            Set {camelCaseToNormal(definition.name)}
+            {validObject(nested.get(path)) ? "Edit" : "Set"}{" "}
+            {camelCaseToNormal(definition.name)}
           </Button>
         )}
         {definition.type === "enum" && (

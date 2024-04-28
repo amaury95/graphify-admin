@@ -12,26 +12,29 @@ import { ResourcePage } from "app/pages/ResourcePage";
 import { NextUIProvider } from "@nextui-org/react";
 import { SchemaProvider } from "provider/Schema";
 import { ThemeProvider } from "next-themes";
+import { ClientProvider } from "provider/Service";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <SchemaProvider>
-      <AuthProvider>
-        <NextUIProvider>
-          {/* @ts-ignore */}
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="light"
-            themes={["light", "dark"]}
-          >
-            <Router />
-          </ThemeProvider>
-        </NextUIProvider>
-      </AuthProvider>
-    </SchemaProvider>
+    <ClientProvider>
+      <SchemaProvider>
+        <AuthProvider>
+          <NextUIProvider>
+            {/* @ts-ignore */}
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="light"
+              themes={["light", "dark"]}
+            >
+              <Router />
+            </ThemeProvider>
+          </NextUIProvider>
+        </AuthProvider>
+      </SchemaProvider>
+    </ClientProvider>
   </React.StrictMode>
 );
 

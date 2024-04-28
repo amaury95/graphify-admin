@@ -1,6 +1,7 @@
-import { useFetchSchema } from "api/resources";
 import { PropsWithChildren, createContext, useContext } from "react";
+import { useFetch } from "utils/hooks";
 import { Schema } from "utils/schema";
+import { useClient } from "./Service";
 
 const SchemaContext = createContext<Schema>({
   edges: {},
@@ -11,7 +12,8 @@ const SchemaContext = createContext<Schema>({
 export const useSchema = () => useContext(SchemaContext);
 
 export function SchemaProvider({ children }: PropsWithChildren) {
-  const { data, loading } = useFetchSchema();
+  const { getSchema } = useClient();
+  const { data, loading } = useFetch(getSchema);
 
   if (loading || !data) return <div>loading...</div>;
 
