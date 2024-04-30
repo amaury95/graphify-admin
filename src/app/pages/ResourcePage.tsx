@@ -71,7 +71,7 @@ export function ResourcePage() {
               startContent={<BackIcon />}
               onPress={() => onBack()}
             >
-              Go Back
+              Back
             </Button>
           </div>
         )}

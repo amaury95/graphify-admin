@@ -1,6 +1,7 @@
 {
   "name": "graphify-admin",
   "version": "0.1.0",
+  "homepage": "/admin/dashboard",
   "private": true,
   "dependencies": {
     "@nextui-org/react": "^2.2.10",
@@ -23,7 +24,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "REACT_APP_BASE_URL=/admin react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

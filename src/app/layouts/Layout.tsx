@@ -26,6 +26,7 @@ import { useTheme } from "next-themes";
 import { MoonIcon } from "app/assets/icons/Moon";
 import { SunIcon } from "app/assets/icons/Sun";
 import { CrossIcon } from "app/assets/icons/Cross";
+import logo from "app/assets/images/logo.png";
 
 export function Layout() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -101,7 +102,7 @@ function Sidebar({ onClose }: { onClose?: Function }) {
         onClick={handleNavigate("/")}
       >
         <div className="text-primary">
-          <Image src="/logo.png" width={35}  />
+          <Image src={logo} width={35} />
         </div>
         <h1 className="ml-3 text-2xl font-bold tracking-wider grow">
           Graphify

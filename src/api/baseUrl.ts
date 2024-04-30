@@ -1,2 +1,3 @@
-export const baseUrl = "http://localhost:8080/admin";
-// export const baseUrl = "https://graphify.ovh/admin";
+export const baseUrl =
+  process.env.REACT_APP_BASE_URL ?? "http://localhost:8080/admin";
+//   process.env.REACT_APP_BASE_URL ?? "https://graphify.ovh/admin";
